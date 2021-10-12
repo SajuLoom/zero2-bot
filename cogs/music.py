@@ -1,4 +1,5 @@
-import discord 
+import discord
+from discord.ext.commands.core import command 
 import youtube_dl
 import pafy
 from discord.ext import commands
@@ -10,16 +11,17 @@ class Music(commands.Cog):
         self.client = client
         self.song_queue = {}
 
-    def setup(self):
+        self.setup1()
+
+    def setup1(self):
         for guild in self.client.guilds:
             self.song_queue[guild.id] =[]
 
     async def check_queue(self, ctx):
         if len(self.song_queue[ctx.guild.id]) > 0:
-            ctx.voice_client.stop()
-            await self.play_song(ctx,self.song_queue[ctx.guild.id][0])
+            await self.play_song(ctx, self.song_queue[ctx.guild.id][0])
             self.song_queue[ctx.guild.id].pop(0)
-    
+
     async def search_song(self, amount, song, get_url = False):
         info = await self.client.loop.run_in_executor(None, lambda:youtube_dl.YoutubeDL({"format": "bestaudio","quiet": True}).extract_info(f"ytsearch{amount}:{song}",download = False, ie_key = "YoutubeSearch"))
         if len(info["entries"]) == 0: return None
@@ -28,7 +30,7 @@ class Music(commands.Cog):
 
     async def play_song(self, ctx, song):
         url = pafy.new(song).getbestaudio().url
-        ctx.voice_client.play(discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(url)),after = lambda error : self.client.loop.create_task(self.check_queue(ctx)))
+        ctx.voice_client.play(discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(url)), after=lambda error: self.client.loop.create_task(self.check_queue(ctx)))
         ctx.voice_client.source.volume = 0.5
 
     
@@ -65,6 +67,7 @@ class Music(commands.Cog):
 
             if result is None:
                 return await ctx.send("OOOOps,Can't find the song")
+                
             song = result[0]
 
         if ctx.voice_client.source is not None:
@@ -131,5 +134,6 @@ class Music(commands.Cog):
 
         if skip:
             ctx.voice_client.stop()
+
 def setup(client):
     client.add_cog(Music(client))
