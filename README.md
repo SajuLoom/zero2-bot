@@ -50,6 +50,9 @@ Zero2 Discord bot is written with Discord.py using Python. This Bot's role is to
 ### Fun
 `*8ball <Question>` : to get random yes/no reply for the question (requirements: Question)
 
+### Misc
+`*pool<choices>` : pool choices for users to react with their answer(requirements: Choices)
+
 <br>
 <br>
 <h1 align ="center">⛑Under Construction🦺🧱</h1>
